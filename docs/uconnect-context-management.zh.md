@@ -256,15 +256,20 @@ context/
 │  │        └─ google_play_games_sync/
 │  │           ├─ asset.body.yaml
 │  │           └─ asset.registry.yaml
+│  │  └─ shared/
+│  │     ├─ engineering_facts/
+│  │     ├─ architecture_facts/
+│  │     ├─ validation_facts/
+│  │     ├─ flow_assets/
+│  │     ├─ skill_assets/
+│  │     └─ validator_assets/
 │  ├─ shared_assets/
 │  │  ├─ vocabularies/
-│  │  ├─ diagrams/
-│  │  ├─ architecture_notes/
-│  │  ├─ version_baselines/
-│  │  ├─ validation_constraints/
-│  │  ├─ validation_touchpoints/
+│  │  ├─ schemas/
 │  │  ├─ templates/
-│  │  └─ policies/
+│  │  │  └─ diagrams/
+│  │  ├─ policies/
+│  │  └─ skills/
 │  ├─ asset_graph/
 │  │  ├─ module_asset_graph.yaml
 │  │  └─ diagnostics/
@@ -306,7 +311,8 @@ context/
 
 - `authoring/` 对应生成环境，承接资产生产和维护
 - `authoring/domains/<domain>/` 按功能域或业务域维护资产两件套，便于 review、回流、替换和删除
-- `authoring/shared_assets/` 维护词汇表、图资产、模板和策略
+- `authoring/domains/shared/` 维护当前项目内跨 domain 复用的上下文资产，例如共享架构事实、工程事实、验证事实、流程资产、Skill Asset 和 Validator Asset
+- `authoring/shared_assets/` 维护项目无关的 authoring 基础能力，例如词汇表、schema、模板、策略和资产生成/检查 Skill
 - `authoring/asset_graph/` 维护以模块为入口的资产关系图和 graph validator 诊断结果
 - `authoring/execution_evidence/` 存放验证长任务产出的 artifact 引用、证据包、执行事实和 `Validator Asset` 生成资料；它是内部 evidence store，不作为默认上下文资产暴露
 - `authoring/build/` 存放 build 诊断和输入快照，不作为 Router 消费入口
@@ -333,45 +339,35 @@ context/
 
 ## 6. Shared Assets
 
-共享资产用于让不同 Skill、不同模块和不同上下文资产使用同一套语言。
+`shared_assets` 是项目无关的 authoring 基础能力层，用于让不同项目、不同 Skill、不同上下文资产使用同一套语言和结构。它不存放当前项目的具体架构图、架构说明、版本基线、验证约束或验证触点。
 
 - `vocabularies`
   - 统一词汇表，约束 `module_tags`、`capabilities`、`dependency_edge_type` 等命名，并包含 `edge_ontology.yaml` 定义合法的引用边分组与来源取值
-- `diagrams`
-  - 总览架构图、包级依赖图、关键链路图等共享图资产
-- `architecture_notes`
-  - 模块职责、架构约束、推荐调用路径、反设计经验等共享架构知识
-- `version_baselines`
-  - SDK 接入基线版本、宿主工程基线和兼容矩阵；属于 `L0` 工程事实，作为可从工程配置半自动同步的 `Engineering Fact` 维护，不注册为 `Architecture Fact`，不享受 `L1` 稳定权威待遇
-- `validation_constraints`
-  - 向后兼容性、AB Test、fallback、环境差异等高阶验证约束
-- `validation_touchpoints`
-  - 数据、事件、日志、callback、UI、SQL/API 等验证证据通道说明
+- `schemas`
+  - `asset.registry.yaml`、Fact Body、`module_asset_graph.yaml`、routing policy、bundle trace 等可校验 schema
 - `templates`
-  - Skill 输出模板、流程资产模板等固定结构
+  - Fact、Flow、Validator、registry、graph、Skill 输出等模板
+  - diagram 生成模板如果被多个 Skill 复用，放在 `templates/diagrams/`
 - `policies`
   - build gate、routing、budget、review 等治理规则
-- `registries`
-  - 模块注册表、能力注册表等共享注册表。资产注册表由各资产目录的 `asset.registry.yaml` 在 build 阶段汇总生成
+- `skills`
+  - 项目无关的资产生产、资产复核、图生成和一致性检查 Skill，例如 `fact_authoring`、`fact_review`、`diagram_authoring`
 
 名字约束词汇表本身也是 shared assets。它不是附属文档，而是上下文资产能否稳定复用的基础。
 
-`shared_assets` 下的内容分为两类：
+项目内跨 domain 复用的上下文知识不放在 `shared_assets`，而是放在 `authoring/domains/shared/`，并作为普通资产维护两件套：
 
-- 作为治理输入的共享文件
-  - 例如 `vocabularies`、`policies`、`templates`，通常由 build toolchain、Router 或 Skill 读取，不直接作为业务上下文资产进入 `ContextBundle`
-- 作为上下文消费资产的共享知识
-  - 例如 `validation_constraints`、`architecture_notes` 和关键 `diagrams`
-  - 只要需要被 Router / Skill 作为上下文消费，就必须和 domain 资产一样提供 `asset.body.*` 和 `asset.registry.yaml`，并在 build 后进入 `asset_registry.index.yaml`
+- 共享架构约束、反设计经验和调用方向
+  - 注册为 `Architecture Fact`，放入 `domains/shared/architecture_facts/`
+- SDK 接入基线版本、宿主工程基线和兼容矩阵
+  - 注册为 `Engineering Fact`，放入 `domains/shared/engineering_facts/`
+- 向后兼容性、AB Test、fallback、环境差异和验证触点说明
+  - 注册为 `Validation Fact`，放入 `domains/shared/validation_facts/`
+- 项目共享架构图、流程图、依赖图
+  - 如果只是产物附件，由对应 `Architecture Fact / Validation Fact / Flow Asset` 正文引用
+  - 如果需要作为可路由上下文消费，应注册为 `Architecture Fact` 或 `Flow Asset`
 
-不新增 `refs.shared`。共享知识资产通过语义类型进入现有边：
-
-- `architecture_notes` 中的架构约束、反设计经验和调用方向应注册为 `Architecture Fact`，并由相关模块通过 `refs.l1` 引用
-- `version_baselines` 不注册为 `Architecture Fact`；它是易变且可从配置恢复的 `Engineering Fact`，由相关模块通过 `refs.l0` 引用
-- `validation_constraints` 应注册为 `Validation Fact`，并由相关模块通过 `refs.l2` 引用
-- 共享流程图如果用于说明验证或接入流程，应注册为 `Flow Asset` 或被对应 `Architecture Fact / Validation Fact` 正文引用
-
-这样 Router 仍然从模块节点和标准 refs 出发，不需要维护额外 shared 边；shared assets 只是在物理目录上共享，在消费模型上仍是普通资产。
+不新增 `refs.shared`。`domains/shared/` 只是项目内共享资产的物理 domain；消费模型上仍是普通资产，通过 `refs.l0 / refs.l1 / refs.l2 / refs.flows / refs.skills / refs.validators` 被模块引用。
 
 ### 6.1 Asset Registry
 
@@ -1686,13 +1682,22 @@ context/
 │  │     ├─ flow_assets/
 │  │     ├─ skill_assets/
 │  │     └─ validator_assets/
+│  │  └─ shared/
+│  │     ├─ engineering_facts/
+│  │     ├─ architecture_facts/
+│  │     ├─ validation_facts/
+│  │     ├─ flow_assets/
+│  │     ├─ skill_assets/
+│  │     └─ validator_assets/
 │  ├─ asset_graph/
 │  │  ├─ module_asset_graph.yaml
 │  │  └─ diagnostics/
 │  └─ shared_assets/
-│     └─ policies/
-│        ├─ routing_policies.yaml
-│        └─ budget_profiles.yaml
+│     ├─ vocabularies/
+│     ├─ schemas/
+│     ├─ templates/
+│     ├─ policies/
+│     └─ skills/
 └─ consumption/
    └─ context_service/
       ├─ domains/
