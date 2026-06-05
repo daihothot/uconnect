@@ -1,0 +1,284 @@
+version: 1
+policies:
+  - id: policy:smoke_test/default
+    intent: smoke_test
+    default_budget_profile: small
+    required_indexes:
+      - asset_registry.index
+      - asset_graph
+      - by_behavior
+      - by_asset
+    max_assets_per_type:
+      behavior_asset: 2
+      bdd_scenario_asset: 3
+      validation_fact: 3
+      validator_asset: 2
+      module_fact: 2
+    load_order:
+      - behavior_asset
+      - bdd_scenario_asset
+      - validation_fact
+      - validator_asset
+      - module_fact
+    required_slots:
+      - behavior_asset
+    optional_slots:
+      - bdd_scenario_asset
+      - validation_fact
+      - validator_asset
+      - module_fact
+    sufficiency_threshold: 0.7
+    allow_stale_required: true
+    expansion_rules:
+      - from: behavior_asset
+        via: has_bdd
+        max_depth: 1
+      - from: behavior_asset
+        via: validated_by
+        max_depth: 1
+      - from: behavior_asset
+        via: executed_by
+        max_depth: 1
+      - from: behavior_asset
+        via: implemented_by
+        max_depth: 1
+      - from: behavior_asset
+        via: depends_on_behavior
+        max_depth: 1
+  - id: policy:impact_analysis/default
+    intent: impact_analysis
+    default_budget_profile: normal
+    required_indexes:
+      - asset_registry.index
+      - asset_graph
+      - by_behavior
+      - by_asset
+      - by_domain
+    max_assets_per_type:
+      behavior_asset: 4
+      requirement_asset: 6
+      specification_asset: 6
+      bdd_scenario_asset: 6
+      architecture_fact: 6
+      validation_fact: 4
+      flow_asset: 4
+      module_fact: 6
+      engineering_fact: 4
+    load_order:
+      - behavior_asset
+      - requirement_asset
+      - specification_asset
+      - bdd_scenario_asset
+      - architecture_fact
+      - validation_fact
+      - flow_asset
+      - module_fact
+      - engineering_fact
+    required_slots:
+      - behavior_asset
+      - architecture_fact
+    optional_slots:
+      - requirement_asset
+      - specification_asset
+      - bdd_scenario_asset
+      - validation_fact
+      - flow_asset
+      - module_fact
+      - engineering_fact
+    sufficiency_threshold: 0.8
+    allow_stale_required: false
+    expansion_rules:
+      - from: behavior_asset
+        via: has_requirement
+        max_depth: 1
+      - from: behavior_asset
+        via: specified_by
+        max_depth: 1
+      - from: behavior_asset
+        via: has_bdd
+        max_depth: 1
+      - from: behavior_asset
+        via: constrained_by
+        max_depth: 1
+      - from: behavior_asset
+        via: validated_by
+        max_depth: 1
+      - from: behavior_asset
+        via: participates_in_flow
+        max_depth: 1
+      - from: behavior_asset
+        via: implemented_by
+        max_depth: 1
+      - from: behavior_asset
+        via: depends_on_behavior
+        max_depth: 1
+  - id: policy:integration_validation/default
+    intent: integration_validation
+    default_budget_profile: normal
+    required_indexes:
+      - asset_registry.index
+      - asset_graph
+      - by_behavior
+      - by_asset
+      - by_domain
+    max_assets_per_type:
+      behavior_asset: 4
+      requirement_asset: 6
+      specification_asset: 6
+      bdd_scenario_asset: 8
+      engineering_fact: 4
+      architecture_fact: 6
+      validation_fact: 8
+      flow_asset: 4
+      validator_asset: 6
+      module_fact: 4
+    load_order:
+      - behavior_asset
+      - requirement_asset
+      - specification_asset
+      - bdd_scenario_asset
+      - validation_fact
+      - validator_asset
+      - architecture_fact
+      - engineering_fact
+      - flow_asset
+      - module_fact
+    required_slots:
+      - behavior_asset
+      - validation_fact
+    optional_slots:
+      - requirement_asset
+      - specification_asset
+      - bdd_scenario_asset
+      - validator_asset
+      - architecture_fact
+      - engineering_fact
+      - flow_asset
+      - module_fact
+    sufficiency_threshold: 0.8
+    allow_stale_required: false
+    expansion_rules:
+      - from: behavior_asset
+        via: has_requirement
+        max_depth: 1
+      - from: behavior_asset
+        via: specified_by
+        max_depth: 1
+      - from: behavior_asset
+        via: has_bdd
+        max_depth: 1
+      - from: behavior_asset
+        via: validated_by
+        max_depth: 1
+      - from: behavior_asset
+        via: executed_by
+        max_depth: 1
+      - from: behavior_asset
+        via: constrained_by
+        max_depth: 1
+      - from: behavior_asset
+        via: implemented_by
+        max_depth: 1
+      - from: behavior_asset
+        via: participates_in_flow
+        max_depth: 1
+      - from: behavior_asset
+        via: depends_on_behavior
+        max_depth: 1
+  - id: policy:regression_precheck/default
+    intent: regression_precheck
+    default_budget_profile: normal
+    required_indexes:
+      - asset_registry.index
+      - asset_graph
+      - by_behavior
+      - by_asset
+    max_assets_per_type:
+      behavior_asset: 4
+      bdd_scenario_asset: 6
+      validation_fact: 8
+      validator_asset: 6
+      flow_asset: 3
+    load_order:
+      - behavior_asset
+      - bdd_scenario_asset
+      - validation_fact
+      - validator_asset
+      - flow_asset
+    required_slots:
+      - behavior_asset
+      - validation_fact
+    optional_slots:
+      - bdd_scenario_asset
+      - validator_asset
+      - flow_asset
+    sufficiency_threshold: 0.8
+    allow_stale_required: false
+    expansion_rules:
+      - from: behavior_asset
+        via: has_bdd
+        max_depth: 1
+      - from: behavior_asset
+        via: validated_by
+        max_depth: 1
+      - from: behavior_asset
+        via: executed_by
+        max_depth: 1
+      - from: behavior_asset
+        via: depends_on_behavior
+        max_depth: 1
+      - from: behavior_asset
+        via: participates_in_flow
+        max_depth: 1
+  - id: policy:sdk_upgrade_check/default
+    intent: sdk_upgrade_check
+    default_budget_profile: normal
+    required_indexes:
+      - asset_registry.index
+      - asset_graph
+      - by_behavior
+      - by_asset
+      - by_domain
+    max_assets_per_type:
+      behavior_asset: 4
+      engineering_fact: 8
+      architecture_fact: 6
+      bdd_scenario_asset: 6
+      validation_fact: 8
+      validator_asset: 6
+      module_fact: 4
+    load_order:
+      - behavior_asset
+      - engineering_fact
+      - architecture_fact
+      - bdd_scenario_asset
+      - validation_fact
+      - validator_asset
+      - module_fact
+    required_slots:
+      - behavior_asset
+      - engineering_fact
+    optional_slots:
+      - architecture_fact
+      - bdd_scenario_asset
+      - validation_fact
+      - validator_asset
+      - module_fact
+    sufficiency_threshold: 0.8
+    allow_stale_required: false
+    expansion_rules:
+      - from: behavior_asset
+        via: implemented_by
+        max_depth: 1
+      - from: behavior_asset
+        via: constrained_by
+        max_depth: 1
+      - from: behavior_asset
+        via: has_bdd
+        max_depth: 1
+      - from: behavior_asset
+        via: validated_by
+        max_depth: 1
+      - from: behavior_asset
+        via: executed_by
+        max_depth: 1

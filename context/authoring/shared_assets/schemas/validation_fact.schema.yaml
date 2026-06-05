@@ -1,0 +1,157 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: uconnect://schemas/validation_fact.schema.yaml
+title: UConnect Validation Fact Body
+type: object
+additionalProperties: false
+# Validation Fact 描述“验证什么”，可引用 Specification Asset 和 BDD Scenario Asset。
+required:
+  - fact_id
+  - fact_type
+  - target
+  - validation_scope
+  - evidence_channels
+  - pass_criteria
+  - fail_signals
+properties:
+  # 验证事实稳定 ID。
+  fact_id:
+    type: string
+    pattern: "^validation:.+$"
+  # Fact 类型固定为 validation_fact。
+  fact_type:
+    const: validation_fact
+  # 验证目标。
+  target:
+    type: object
+    additionalProperties: false
+    required:
+      - capability
+    properties:
+      # 被验证能力。
+      capability:
+        type: string
+        minLength: 1
+      # 适用模块。
+      modules:
+        type: array
+        items:
+          type: string
+      # 适用平台。
+      platforms:
+        type: array
+        items:
+          type: string
+      # 适用场景标签。
+      scenarios:
+        type: array
+        items:
+          type: string
+  # 验证范围。
+  validation_scope:
+    type: object
+    additionalProperties: false
+    required:
+      - expected_behaviors
+    properties:
+      # 期望行为。
+      expected_behaviors:
+        type: array
+        minItems: 1
+        items:
+          type: string
+      # 不在验证范围内的内容。
+      out_of_scope:
+        type: array
+        items:
+          type: string
+  # 证据通道。
+  evidence_channels:
+    type: array
+    minItems: 1
+    items:
+      type: string
+      enum:
+        - log
+        - callback
+        - event
+        - api
+        - sql
+        - ui
+        - device_state
+        - screenshot
+  # 通过条件。
+  pass_criteria:
+    type: array
+    minItems: 1
+    items:
+      type: string
+  # 失败信号。
+  fail_signals:
+    type: array
+    items:
+      type: string
+  # 兼容性要求。
+  compatibility:
+    type: object
+    additionalProperties: false
+    properties:
+      # 向后兼容要求。
+      backward_compatibility:
+        type: array
+        items:
+          type: string
+      # SDK、插件或项目版本约束。
+      version_constraints:
+        type: array
+        items:
+          type: string
+      # 环境约束。
+      environment_constraints:
+        type: array
+        items:
+          type: string
+  # 运行时变体约束，例如 AB Test 或 fallback。
+  runtime_variants:
+    type: object
+    additionalProperties: false
+    properties:
+      # AB Test 分流行为。
+      ab_test:
+        type: array
+        items:
+          type: string
+      # fallback 或容错行为。
+      fallback:
+        type: array
+        items:
+          type: string
+  # 可复用历史计划样本引用。
+  historical_plan_refs:
+    type: array
+    items:
+      type: string
+  # 关联 Specification Asset，用于回溯验证口径覆盖的设计承诺。
+  specification_refs:
+    type: array
+    items:
+      type: string
+      pattern: "^spec:.+$"
+  # 关联 BDD Scenario Asset，用于回溯真实场景分析和验收语义。
+  bdd_refs:
+    type: array
+    items:
+      type: string
+      pattern: "^bdd:.+$"
+  # 实现或验证证据引用。
+  implementation_evidence_refs:
+    type: array
+    items:
+      type: string
+  # 推荐绑定的 Validator Asset。
+  validator_bindings:
+    type: array
+    items:
+      type: string
+  # 外部生产端对验证口径、代码结构与证据触点的复核绑定。
+  code_binding:
+    $ref: uconnect://schemas/fact_code_binding.schema.yaml

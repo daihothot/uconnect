@@ -1,0 +1,98 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: uconnect://schemas/feature_asset.schema.yaml
+title: UConnect Feature Asset Optional Body
+type: object
+additionalProperties: false
+# Feature Asset 默认可以只维护 registry item；本 schema 只用于需要独立正文的复杂 Feature。
+# Feature Asset 是产品或交付归属，不作为默认导航中心，也不重复保存 Requirement / Specification 边。
+required:
+  - feature_id
+  - asset_type
+  - domain
+  - name
+  - summary
+properties:
+  # 功能资产稳定 ID。
+  feature_id:
+    type: string
+    pattern: "^feature:.+$"
+  # 资产类型固定为 feature_asset。
+  asset_type:
+    const: feature_asset
+  # 所属 domain。
+  domain:
+    type: string
+    minLength: 1
+  # 功能可读名称。
+  name:
+    type: string
+    minLength: 1
+  # 功能摘要。
+  summary:
+    type: string
+    minLength: 1
+  # 功能能力标签。
+  capability_tags:
+    type: array
+    items:
+      type: string
+  # Feature 只关联行为、事实和流程，不重复保存需求、规格或模块导航边。
+  linked_assets:
+    type: object
+    additionalProperties: false
+    properties:
+      # 关联产品或交付归属对应的 Behavior Asset。
+      behavior_refs:
+        type: array
+        items:
+          type: string
+          pattern: "^behavior:.+$"
+      # 关联 Architecture Fact。
+      architecture_fact_refs:
+        type: array
+        items:
+          type: string
+          pattern: "^arch:.+$"
+      # 关联 Validation Fact。
+      validation_fact_refs:
+        type: array
+        items:
+          type: string
+          pattern: "^validation:.+$"
+      # 关联 Flow Asset。
+      flow_asset_refs:
+        type: array
+        items:
+          type: string
+          pattern: "^flow:.+$"
+  # 来源引用；PR 作为来源引用，不作为独立资产类型。
+  source_refs:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - type
+        - ref
+      properties:
+        type:
+          type: string
+          enum:
+            - issue
+            - project
+            - discussion
+            - comment
+            - pr
+            - commit
+            - doc
+            - other
+        ref:
+          type: string
+        url:
+          type: string
+  # 生命周期或复核状态。
+  status:
+    type: string
+  # 维护说明。
+  notes:
+    type: string

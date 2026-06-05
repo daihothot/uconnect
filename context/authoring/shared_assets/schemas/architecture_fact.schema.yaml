@@ -1,0 +1,89 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: uconnect://schemas/architecture_fact.schema.yaml
+title: UConnect Architecture Fact Body
+type: object
+additionalProperties: false
+# Architecture Fact 是架构事实，用于描述职责、边界、调用方向和反设计经验。
+required:
+  - fact_id
+  - fact_type
+  - topics
+  - scope
+  - constraints
+properties:
+  # 架构事实稳定 ID。
+  fact_id:
+    type: string
+    pattern: "^arch:.+$"
+  # Fact 类型固定为 architecture_fact。
+  fact_type:
+    const: architecture_fact
+  # 架构事实主题。
+  topics:
+    type: array
+    items:
+      type: string
+  # 架构事实适用范围。
+  scope:
+    type: object
+    additionalProperties: false
+    properties:
+      # 适用 module。
+      modules:
+        type: array
+        items:
+          type: string
+      # 适用能力标签。
+      capabilities:
+        type: array
+        items:
+          type: string
+      # 适用平台。
+      platforms:
+        type: array
+        items:
+          type: string
+      # 适用版本或版本区间。
+      versions:
+        type: array
+        items:
+          type: string
+  # 架构约束列表。
+  constraints:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - statement
+      properties:
+        # 约束 ID。
+        id:
+          type: string
+          minLength: 1
+        # 约束正文。
+        statement:
+          type: string
+          minLength: 1
+        # 约束理由。
+        rationale:
+          type: string
+        # 推荐实践。
+        recommended_practice:
+          type: string
+        # 禁止实践。
+        prohibited_practice:
+          type: string
+        # 违反约束的风险。
+        risk_if_violated:
+          type: string
+  # 证据引用。
+  evidence_refs:
+    type: array
+    items:
+      type: string
+  # 外部生产端对架构事实与代码结构、机制或证据的复核绑定。
+  code_binding:
+    $ref: uconnect://schemas/fact_code_binding.schema.yaml

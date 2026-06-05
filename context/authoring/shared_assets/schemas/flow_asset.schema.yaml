@@ -1,0 +1,74 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: uconnect://schemas/flow_asset.schema.yaml
+title: UConnect Flow Asset Body
+type: object
+additionalProperties: false
+# Flow Asset 描述跨模块关键链路，不直接保存代码结构绑定。
+required:
+  - flow_id
+  - asset_type
+  - flow_goal
+  - involved_modules
+  - steps
+properties:
+  # 流程资产稳定 ID。
+  flow_id:
+    type: string
+    pattern: "^flow:.+$"
+  # 资产类型固定为 flow_asset。
+  asset_type:
+    const: flow_asset
+  # 流程目标。
+  flow_goal:
+    type: string
+    minLength: 1
+  # 流程涉及模块。
+  involved_modules:
+    type: array
+    minItems: 1
+    items:
+      type: string
+  # 流程入口摘要。
+  entry_summary:
+    type: string
+  # 流程步骤。
+  steps:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - action
+      properties:
+        # 步骤 ID。
+        id:
+          type: string
+        # 步骤所属模块。
+        module:
+          type: string
+        # 步骤动作。
+        action:
+          type: string
+        # 步骤产出或关键状态。
+        outcome:
+          type: string
+  # 流程触发条件。
+  trigger:
+    type: string
+  # 流程终态。
+  terminal_state:
+    type: string
+  # 关联 Architecture Fact。
+  architecture_fact_refs:
+    type: array
+    items:
+      type: string
+      pattern: "^arch:.+$"
+  # 关联 Validation Fact。
+  validation_fact_refs:
+    type: array
+    items:
+      type: string
+      pattern: "^validation:.+$"

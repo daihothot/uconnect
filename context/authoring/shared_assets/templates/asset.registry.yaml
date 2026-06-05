@@ -1,0 +1,29 @@
+asset_id:
+asset_type:
+title:
+summary:
+# Feature Asset item-only 时可省略；其它可路由正文资产必填。
+body_path:
+uri:
+schema_refs: {}
+applies_to:
+  intents: []
+  domains: []
+  modules: []
+  platforms: []
+  scenarios: []
+  capabilities: []
+  validation_touchpoints: []
+token_estimate:
+dependencies: []
+search_tags: []
+risk_level:
+review_status:
+status_source:
+  source_system:
+  source_adapter:
+  source_stage:
+  source_artifact:
+  source_commit:
+  source_snapshot:
+stale_reasons: []

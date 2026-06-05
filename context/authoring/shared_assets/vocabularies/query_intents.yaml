@@ -1,0 +1,16 @@
+# Router query intent 词表。
+# Intent 用于把自然语言请求、Skill 调用和 diff 上下文归一化到稳定加载策略。
+version: 1
+
+# 合法 query intent。
+query_intents:
+  # 冒烟验证：快速确认目标行为或能力是否基本可用。
+  - smoke_test
+  # 影响面分析：根据行为、diff 和架构事实判断可能受影响的范围。
+  - impact_analysis
+  # 集成验证：围绕接入基线、流程、验证口径和 Validator 生成验证计划。
+  - integration_validation
+  # 回归预检：基于历史验证事实、QA checklist 和 Validator 摘要做回归前检查。
+  - regression_precheck
+  # SDK 升级检查：关注版本基线、兼容矩阵、受影响行为和验证要求。
+  - sdk_upgrade_check

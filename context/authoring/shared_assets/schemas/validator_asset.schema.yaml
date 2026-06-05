@@ -1,0 +1,153 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: uconnect://schemas/validator_asset.schema.yaml
+title: UConnect Validator Asset Body
+type: object
+additionalProperties: false
+# Validator Asset 描述“怎么执行验证”，引用 Validation Fact 和 BDD Scenario Asset。
+required:
+  - validator_id
+  - asset_type
+  - flow_identity
+  - validates
+  - platform
+  - components
+  - device_requirements
+  - execution_steps
+  - evidence_extractors
+  - result_interpretation
+  - outputs
+properties:
+  # Validator 资产稳定 ID。
+  validator_id:
+    type: string
+    pattern: "^validator:.+$"
+  # 资产类型固定为 validator_asset。
+  asset_type:
+    const: validator_asset
+  # 验证流程身份，用于判定是否同一类验证流程。
+  flow_identity:
+    type: object
+    additionalProperties: false
+    required:
+      - normalized_task_goal
+      - platform
+      - identity_hash
+    properties:
+      # 标准化任务目标。
+      normalized_task_goal:
+        type: string
+      # 适用平台。
+      platform:
+        type: string
+      # 验证场景。
+      scenario:
+        type: string
+      # 验证能力。
+      capability:
+        type: string
+      # 关联的 Validation Fact ID。
+      validation_fact_ids:
+        type: array
+        items:
+          type: string
+          pattern: "^validation:.+$"
+      # 验证流程身份 hash。
+      identity_hash:
+        type: string
+  # 当前 Validator 验证的 Validation Fact 列表。
+  validates:
+    type: array
+    minItems: 1
+    items:
+      type: string
+      pattern: "^validation:.+$"
+  # 当前 Validator 可执行或可采集的 BDD Scenario Asset。
+  bdd_refs:
+    type: array
+    items:
+      type: string
+      pattern: "^bdd:.+$"
+  # 适用平台。
+  platform:
+    type: string
+  # 适用场景。
+  scenario:
+    type: string
+  # Validator 执行所需组件。
+  components:
+    type: object
+    additionalProperties: false
+    properties:
+      # 关联 Skill Asset。
+      skill:
+        type: string
+        pattern: "^skill:.+$"
+      # 需要调用的工具。
+      tools:
+        type: array
+        items:
+          type: string
+      # 执行所需资源。
+      resources:
+        type: array
+        items:
+          type: string
+      # 执行配置。
+      config:
+        type: object
+  # 设备要求。
+  device_requirements:
+    type: object
+    additionalProperties: false
+    properties:
+      # 所需平台。
+      platforms:
+        type: array
+        items:
+          type: string
+      # 最低系统版本。
+      min_os_versions:
+        type: array
+        items:
+          type: string
+      # 设备数量要求。
+      device_count:
+        type: integer
+        minimum: 0
+  # 执行步骤。
+  execution_steps:
+    type: array
+    minItems: 1
+    items:
+      type: object
+  # 证据提取器。
+  evidence_extractors:
+    type: array
+    items:
+      type: object
+  # 结果解释规则。
+  result_interpretation:
+    type: object
+    additionalProperties: false
+    properties:
+      # 判定通过的条件。
+      pass_when:
+        type: array
+        items:
+          type: string
+      # 判定失败的条件。
+      fail_when:
+        type: array
+        items:
+          type: string
+  # 输出 schema 引用。
+  outputs:
+    type: object
+    additionalProperties: false
+    properties:
+      # Execution Fact schema。
+      execution_fact_schema:
+        type: string
+      # Evidence summary schema。
+      evidence_summary_schema:
+        type: string

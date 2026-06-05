@@ -1,0 +1,137 @@
+# UConnect 资产关系边词汇语义表。
+# 这里定义 asset_graph 中允许出现的关系边类型、目标资产类型、边来源和边状态。
+# Behavior Asset 是默认导航中心；Requirement / Specification / BDD 等资产也可以作为显式入口。
+version: 1
+
+# 合法关系边类型。
+edge_types:
+  # 行为到需求资产：回答这个行为满足哪些“需要做什么”。
+  - name: has_requirement
+    from_asset_types:
+      - behavior_asset
+      - specification_asset
+    target_asset_types:
+      - requirement_asset
+    semantics: behavior_to_requirement
+  # 行为到规格资产：回答这个行为由哪些设计承诺定义。
+  - name: specified_by
+    from_asset_types:
+      - behavior_asset
+      - requirement_asset
+    target_asset_types:
+      - specification_asset
+    semantics: behavior_to_specification
+  # 行为到 BDD 场景：回答这个行为有哪些真实场景和验收语义。
+  - name: has_bdd
+    from_asset_types:
+      - behavior_asset
+      - specification_asset
+      - validation_fact
+      - validator_asset
+    target_asset_types:
+      - bdd_scenario_asset
+    semantics: asset_to_bdd_scenario
+  # 行为到验证事实：回答这个行为需要验证什么。
+  - name: validated_by
+    from_asset_types:
+      - behavior_asset
+      - specification_asset
+      - bdd_scenario_asset
+    target_asset_types:
+      - validation_fact
+    semantics: behavior_to_validation_fact
+  # 行为到 Validator：回答这个行为如何执行验证。
+  - name: executed_by
+    from_asset_types:
+      - behavior_asset
+      - validation_fact
+      - bdd_scenario_asset
+    target_asset_types:
+      - validator_asset
+    semantics: behavior_to_validator
+  # 行为到架构事实：回答这个行为受哪些设计约束影响。
+  - name: constrained_by
+    from_asset_types:
+      - behavior_asset
+      - specification_asset
+      - flow_asset
+    target_asset_types:
+      - architecture_fact
+    semantics: behavior_to_architecture_fact
+  # 行为到模块事实：回答这个行为涉及哪些实现表面；module 不是默认导航根。
+  - name: implemented_by
+    from_asset_types:
+      - behavior_asset
+      - specification_asset
+      - flow_asset
+    target_asset_types:
+      - module_fact
+      - engineering_fact
+    semantics: behavior_to_implementation_surface
+  # 行为到证据引用：回答这个行为有哪些实现或验证证据。
+  - name: evidenced_by
+    from_asset_types:
+      - behavior_asset
+      - specification_asset
+      - validation_fact
+      - validator_asset
+    target_asset_types:
+      - evidence_ref
+    semantics: asset_to_evidence
+  # 行为到 Feature：回答这个行为归属哪个产品或交付功能。
+  - name: belongs_to_feature
+    from_asset_types:
+      - behavior_asset
+    target_asset_types:
+      - feature_asset
+    semantics: behavior_to_feature
+  # 行为到流程：回答这个行为参与哪些关键流程。
+  - name: participates_in_flow
+    from_asset_types:
+      - behavior_asset
+      - module_fact
+    target_asset_types:
+      - flow_asset
+    semantics: behavior_to_flow
+  # 行为到 Skill：回答处理这个行为时可用哪些任务方法。
+  - name: uses_skill
+    from_asset_types:
+      - behavior_asset
+    target_asset_types:
+      - skill_asset
+    semantics: behavior_to_skill
+  # 行为依赖其它行为：回答当前行为成立前依赖哪些前置行为或协同行为。
+  - name: depends_on_behavior
+    from_asset_types:
+      - behavior_asset
+    target_asset_types:
+      - behavior_asset
+    semantics: behavior_dependency
+
+# 合法引用边来源。
+edge_sources:
+  # 自动扫描或确定性配置扫描产生。
+  - auto
+  # 来自 asset.registry.yaml 的显式声明或 registry 类型字段推断。
+  - registry
+  # Adapter admission gate 写入的显式绑定，可来自外部生产端、验证回流或人工 authoring。
+  - adapter
+  # 来自 routing policy、能力词表或固定治理规则。
+  - policy
+
+# 合法引用边状态。
+edge_statuses:
+  # 候选边，通常来自检索种子、自动候选或证据不足的映射。
+  - candidate
+  # 已确认边，表示关系已通过 Adapter、build 或治理规则闭环。
+  - confirmed
+  # 部分覆盖边，表示关系只覆盖部分需求、实现或验证范围。
+  - partial
+  # 阻断边，表示缺少必要证据或流程明确无法继续。
+  - blocked
+  # 待复核边，表示证据不足或多个候选无法判定。
+  - needs_review
+  # 过期边，表示外部生产端判断证据或关系已过期。
+  - stale
+  # 无效边，表示已被验证或复核证明错误。
+  - invalid

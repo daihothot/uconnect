@@ -1,0 +1,69 @@
+# UConnect 基础资产、风险、平台和证据通道词表。
+# 这些值用于 asset.registry.yaml、Fact Body、Router policy 和 build gate 校验。
+version: 1
+
+# 可被 registry / graph / Router 独立识别的资产类型。
+asset_types:
+  # 行为资产：默认导航中心，描述系统对用户、业务或外部系统可观察的行为。
+  - behavior_asset
+  # 模块事实：由扫描器自动生成，用于实现表面定位和影响面补充。
+  - module_fact
+  # 工程事实：由工程配置恢复，例如 SDK 版本、构建配置、兼容矩阵。
+  - engineering_fact
+  # 架构事实：authoring / Adapter 沉淀的职责、边界、调用方向和反设计经验。
+  - architecture_fact
+  # 验证事实：authoring / Adapter 沉淀的验证口径、证据通道和通过条件。
+  - validation_fact
+  # 功能资产：产品或交付归属，不作为默认导航中心。
+  - feature_asset
+  # 规格资产：从 spec / plan 等来源沉淀设计承诺，映射需求需要做什么和实现实际做了什么。
+  - specification_asset
+  # BDD 场景资产：沉淀真实场景分析、Given / When / Then 验收语义和验证关联。
+  - bdd_scenario_asset
+  # 流程资产：跨模块关键链路，不直接保存代码结构绑定。
+  - flow_asset
+  # Skill 资产：代码助手执行规范和结构化输出约束。
+  - skill_asset
+  # Validator 资产：可执行验证流程，引用 Validation Fact。
+  - validator_asset
+  # 需求资产：从 GitHub Project / Issue 等来源沉淀的原始需求、设计意图和决策摘要。
+  - requirement_asset
+
+# 风险等级。用于 Router 预算分配、人工复核排序和高风险策略开关。
+risk_levels:
+  # 低风险：常规变更，通常不需要额外复核。
+  - low
+  # 中风险：默认风险等级，缺省时按 medium 处理。
+  - medium
+  # 高风险：涉及核心链路、兼容性或验证口径，需要提高预算或复核优先级。
+  - high
+  # 严重风险：账号、支付、存档、AB、登录态等关键链路。
+  - critical
+
+# 标准平台标签。项目可在具体 asset 中扩展自定义平台，但通用策略优先使用这些值。
+platforms:
+  # iOS 真机或 iOS 构建链路。
+  - ios
+  # Android 真机、模拟器或 Android 构建链路。
+  - android
+  # Unity Editor 内验证或编辑器环境。
+  - unity_editor
+
+# 标准证据通道。用于 Validation Fact、Validator Asset 和 Router 相关度计算。
+evidence_channels:
+  # 日志证据，例如 Unity log、设备 log、SDK log。
+  - log
+  # callback 证据，例如 SDK 回调参数和调用顺序。
+  - callback
+  # 事件证据，例如埋点、业务事件、系统事件。
+  - event
+  # API 证据，例如 HTTP/RPC 返回、服务端状态查询。
+  - api
+  # SQL 或数仓查询证据。
+  - sql
+  # UI 状态证据，例如界面元素、文本、交互结果。
+  - ui
+  # 设备状态证据，例如安装状态、权限、网络、系统设置。
+  - device_state
+  # 截图证据，通常作为 UI 或设备状态的辅助 artifact。
+  - screenshot

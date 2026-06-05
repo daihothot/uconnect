@@ -1,0 +1,14 @@
+feature_id: feature:<domain>/<feature_name>
+asset_type: feature_asset
+domain:
+name:
+summary:
+capability_tags: []
+linked_assets:
+  behavior_refs: []
+  architecture_fact_refs: []
+  validation_fact_refs: []
+  flow_asset_refs: []
+source_refs: []
+status:
+notes:

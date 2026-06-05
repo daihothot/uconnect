@@ -1,0 +1,108 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: uconnect://schemas/engineering_fact.schema.yaml
+title: UConnect Engineering Fact Body
+type: object
+additionalProperties: false
+# Engineering Fact 是工程事实，用于描述版本、平台配置和兼容矩阵。
+required:
+  - fact_id
+  - fact_type
+  - topics
+  - scope
+  - source_paths
+  - baselines
+properties:
+  # 工程事实稳定 ID。
+  fact_id:
+    type: string
+    pattern: "^engineering:.+$"
+  # Fact 类型固定为 engineering_fact。
+  fact_type:
+    const: engineering_fact
+  # 工程事实主题。
+  topics:
+    type: array
+    items:
+      type: string
+  # 工程事实适用范围。
+  scope:
+    type: object
+    additionalProperties: false
+    properties:
+      # 适用 module。
+      modules:
+        type: array
+        items:
+          type: string
+      # 适用平台。
+      platforms:
+        type: array
+        items:
+          type: string
+      # 关联包或 SDK。
+      packages:
+        type: array
+        items:
+          type: string
+  # 工程事实来源路径。
+  source_paths:
+    type: array
+    minItems: 1
+    items:
+      type: string
+  # 基线条目，例如 SDK 版本、插件版本或构建配置。
+  baselines:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - subject
+        - value
+        - source_path
+      properties:
+        # 基线条目 ID。
+        id:
+          type: string
+        # 基线主体。
+        subject:
+          type: string
+        # 基线值。
+        value:
+          type: string
+        # 基线来源路径。
+        source_path:
+          type: string
+        # 适用平台。
+        platform:
+          type: string
+        # 维护说明。
+        note:
+          type: string
+  # 兼容矩阵。
+  compatibility_matrix:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - subject
+        - condition
+        - compatible
+      properties:
+        # 兼容主体。
+        subject:
+          type: string
+        # 兼容条件。
+        condition:
+          type: string
+        # 是否兼容。
+        compatible:
+          type: boolean
+        # 兼容性证据路径。
+        evidence_path:
+          type: string
+  # 工程事实生成时的代码提交号。
+  source_commit:
+    type: string

@@ -1,0 +1,30 @@
+scenario_id: bdd:<domain>/<scenario_name>
+asset_type: bdd_scenario_asset
+title:
+source_refs: []
+scope:
+  domains: []
+  modules: []
+  features: []
+  platforms: []
+  capabilities: []
+  scenarios: []
+scenario_analysis:
+  user_goal:
+  business_context:
+  assumptions: []
+  edge_cases: []
+  risk_notes: []
+given: []
+when: []
+then: []
+linked_assets:
+  requirement_refs: []
+  specification_refs: []
+  validation_fact_refs: []
+  validator_refs: []
+  feature_refs: []
+  implementation_evidence_refs: []
+tags: []
+status:
+notes:

@@ -1,0 +1,30 @@
+validator_id: validator:<domain>/<platform>/<scenario>
+asset_type: validator_asset
+flow_identity:
+  normalized_task_goal:
+  platform:
+  scenario:
+  capability:
+  validation_fact_ids: []
+  identity_hash:
+validates: []
+bdd_refs: []
+platform:
+scenario:
+components:
+  skill:
+  tools: []
+  resources: []
+  config: {}
+device_requirements:
+  platforms: []
+  min_os_versions: []
+  device_count:
+execution_steps: []
+evidence_extractors: []
+result_interpretation:
+  pass_when: []
+  fail_when: []
+outputs:
+  execution_fact_schema:
+  evidence_summary_schema:

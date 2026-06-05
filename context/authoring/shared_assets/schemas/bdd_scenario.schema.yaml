@@ -1,0 +1,190 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: uconnect://schemas/bdd_scenario.schema.yaml
+title: UConnect BDD Scenario Asset Body
+type: object
+additionalProperties: false
+# BDD Scenario Asset 是可被 Router 直接发现的真实场景资产。
+required:
+  - scenario_id
+  - asset_type
+  - title
+  - scenario_analysis
+  - given
+  - when
+  - then
+properties:
+  # BDD 场景稳定 ID，和 registry asset_id 使用同一命名空间。
+  scenario_id:
+    type: string
+    pattern: "^bdd:.+$"
+  # 资产类型固定为 bdd_scenario_asset。
+  asset_type:
+    const: bdd_scenario_asset
+  # 场景可读标题。
+  title:
+    type: string
+    minLength: 1
+  # 场景分析，回答这个 BDD 为什么值得被独立检索和验证。
+  scenario_analysis:
+    type: object
+    additionalProperties: false
+    required:
+      - user_goal
+    properties:
+      # 用户目标或业务目标。
+      user_goal:
+        type: string
+        minLength: 1
+      # 业务上下文。
+      business_context:
+        type: string
+      # 场景成立的前置假设。
+      assumptions:
+        type: array
+        items:
+          type: string
+      # 需要覆盖的边界情况。
+      edge_cases:
+        type: array
+        items:
+          type: string
+      # 风险说明。
+      risk_notes:
+        type: array
+        items:
+          type: string
+  # 来源引用，例如 issue、project、spec、plan、PR 或 commit。
+  source_refs:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - type
+        - ref
+      properties:
+        type:
+          type: string
+          enum:
+            - spec
+            - plan
+            - task
+            - doc
+            - issue
+            - project
+            - discussion
+            - comment
+            - pr
+            - commit
+            - bdd
+            - other
+        ref:
+          type: string
+        url:
+          type: string
+  # 场景适用范围，用于 Router 在不加载正文时做初筛。
+  scope:
+    type: object
+    additionalProperties: false
+    properties:
+      # 适用 domain。
+      domains:
+        type: array
+        items:
+          type: string
+      # 适用 module。
+      modules:
+        type: array
+        items:
+          type: string
+          pattern: "^module:.+$"
+      # 适用 feature。
+      features:
+        type: array
+        items:
+          type: string
+          pattern: "^feature:.+$"
+      # 适用平台。
+      platforms:
+        type: array
+        items:
+          type: string
+      # 适用能力标签。
+      capabilities:
+        type: array
+        items:
+          type: string
+      # 适用场景标签。
+      scenarios:
+        type: array
+        items:
+          type: string
+  # Given：前置条件。
+  given:
+    type: array
+    minItems: 1
+    items:
+      type: string
+  # When：触发动作。
+  when:
+    type: array
+    minItems: 1
+    items:
+      type: string
+  # Then：期望结果。
+  then:
+    type: array
+    minItems: 1
+    items:
+      type: string
+  # 关联资产投影，供 build gate、Router 和关系数据库建边。
+  linked_assets:
+    type: object
+    additionalProperties: false
+    properties:
+      # 关联 Requirement Asset，回答需要做什么。
+      requirement_refs:
+        type: array
+        items:
+          type: string
+          pattern: "^requirement:.+$"
+      # 关联 Specification Asset，回答设计承诺怎么做。
+      specification_refs:
+        type: array
+        items:
+          type: string
+          pattern: "^spec:.+$"
+      # 关联 Validation Fact，回答验证什么。
+      validation_fact_refs:
+        type: array
+        items:
+          type: string
+          pattern: "^validation:.+$"
+      # 关联 Validator Asset，回答怎么执行验证。
+      validator_refs:
+        type: array
+        items:
+          type: string
+          pattern: "^validator:.+$"
+      # 关联 Feature Asset，回答功能归属。
+      feature_refs:
+        type: array
+        items:
+          type: string
+          pattern: "^feature:.+$"
+      # 实现或验证证据引用。
+      implementation_evidence_refs:
+        type: array
+        items:
+          type: string
+  # 检索标签。
+  tags:
+    type: array
+    items:
+      type: string
+  # 生命周期或复核状态。
+  status:
+    type: string
+  # 维护说明。
+  notes:
+    type: string

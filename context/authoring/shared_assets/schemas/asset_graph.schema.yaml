@@ -1,0 +1,207 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: uconnect://schemas/asset_graph.schema.yaml
+title: UConnect Asset Graph
+type: object
+additionalProperties: false
+# asset_graph 是当前快照内的资产关系图。默认导航中心是 Behavior Asset，
+# 但 Requirement / Specification / BDD 等高价值资产也可以作为显式入口。
+required:
+  - version
+  - asset_id
+  - source_commit
+  - graph_snapshot_id
+  - generated_at
+  - nodes
+  - edges
+properties:
+  # 图 schema 版本。
+  version:
+    type: integer
+  # Asset Graph 固定资产 ID。
+  asset_id:
+    const: index:asset_graph
+  # 本次图构建依据的代码提交号。
+  source_commit:
+    type: string
+    minLength: 1
+  # 发布后的图快照 ID。
+  graph_snapshot_id:
+    type: string
+    minLength: 1
+  # 自动生成时间。
+  generated_at:
+    type: string
+  # 最近更新时间。
+  updated_at:
+    type: string
+  # 资产节点列表。节点来自 registry index，不以内嵌正文为准。
+  nodes:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - asset_id
+        - asset_type
+      properties:
+        # 资产稳定 ID。
+        asset_id:
+          $ref: "#/$defs/asset_id"
+        # 资产类型。
+        asset_type:
+          $ref: "#/$defs/asset_type"
+        # 是否默认作为导航入口。
+        entrypoint:
+          type: boolean
+        # 节点元信息。
+        metadata:
+          type: object
+          additionalProperties: true
+  # 规范化引用边表。Router 沿边做扩展，registry 负责节点发现。
+  edges:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - edge_id
+        - from_asset_id
+        - edge_type
+        - to_asset_id
+        - source
+        - status
+        - status_source
+      properties:
+        # 引用边稳定 ID。
+        edge_id:
+          type: string
+          minLength: 1
+        # 起点资产 ID，默认通常是 behavior:<domain>/<behavior_name>。
+        from_asset_id:
+          $ref: "#/$defs/asset_id"
+        # 受控边类型，必须来自 edge_ontology.yaml。
+        edge_type:
+          $ref: "#/$defs/edge_type"
+        # 终点资产 ID。
+        to_asset_id:
+          $ref: "#/$defs/asset_id"
+        # 引用边来源。
+        source:
+          $ref: "#/$defs/edge_source"
+        # 引用边状态。
+        status:
+          $ref: "#/$defs/edge_status"
+        # 状态来源。
+        status_source:
+          $ref: "#/$defs/status_source"
+        # 引用原因。
+        reason:
+          type: string
+        # 引用置信度。
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+        # 引用边诊断信息。
+        diagnostics:
+          type: array
+          items:
+            type: string
+  # build 生成的辅助索引，例如 by_entrypoint、by_asset、by_edge_type。
+  indexes:
+    type: object
+    additionalProperties: true
+  # graph validation 和 build gate 诊断。
+  diagnostics:
+    type: array
+    items:
+      type: object
+      additionalProperties: true
+$defs:
+  # 资产类型。
+  asset_type:
+    type: string
+    enum:
+      - behavior_asset
+      - module_fact
+      - engineering_fact
+      - architecture_fact
+      - validation_fact
+      - feature_asset
+      - requirement_asset
+      - specification_asset
+      - bdd_scenario_asset
+      - flow_asset
+      - skill_asset
+      - validator_asset
+  # 资产稳定 ID。
+  asset_id:
+    type: string
+    pattern: "^(behavior|module|engineering|arch|validation|feature|requirement|spec|bdd|flow|skill|validator|evidence|artifact|index):.+$"
+  # 关系边类型。
+  edge_type:
+    type: string
+    enum:
+      - has_requirement
+      - specified_by
+      - has_bdd
+      - validated_by
+      - executed_by
+      - constrained_by
+      - implemented_by
+      - evidenced_by
+      - belongs_to_feature
+      - participates_in_flow
+      - uses_skill
+      - depends_on_behavior
+  # 引用边来源。
+  edge_source:
+    type: string
+    enum:
+      - auto
+      - registry
+      - adapter
+      - policy
+  # 引用边状态。
+  edge_status:
+    type: string
+    enum:
+      - candidate
+      - confirmed
+      - partial
+      - blocked
+      - needs_review
+      - stale
+      - invalid
+  # 状态来源。
+  status_source:
+    type: object
+    additionalProperties: false
+    required:
+      - source_system
+    properties:
+      # 状态来源系统。
+      source_system:
+        type: string
+        enum:
+          - uconnect_build
+          - adapter
+          - manual_authoring
+          - validation_feedback
+          - validator_health_check
+          - other_producer
+      # Adapter ID，source_system 为 adapter 时填写。
+      source_adapter:
+        type: string
+      # 来源阶段。
+      source_stage:
+        type: string
+      # 状态依据的源文件、note、报告或 evidence URI。
+      source_artifact:
+        type: string
+      # 状态依据的代码提交号。
+      source_commit:
+        type: string
+      # 状态依据的资产或代码快照 ID。
+      source_snapshot:
+        type: string

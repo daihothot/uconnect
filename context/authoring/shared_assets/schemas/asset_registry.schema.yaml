@@ -1,0 +1,170 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: uconnect://schemas/asset_registry.schema.yaml
+title: UConnect Asset Registry Item
+type: object
+additionalProperties: true
+# Asset Registry Item 是资产静态身份证，用于 Router 在不加载正文时发现、过滤和排序资产。
+required:
+  - asset_id
+  - asset_type
+  - title
+  - summary
+  - uri
+  - applies_to
+allOf:
+  # Feature Asset 默认允许 item-only；其它可路由正文资产必须提供 body_path。
+  - if:
+      properties:
+        asset_type:
+          const: feature_asset
+    then: {}
+    else:
+      required:
+        - body_path
+properties:
+  # 资产稳定 ID。
+  asset_id:
+    type: string
+    pattern: "^(behavior|module|engineering|arch|validation|feature|spec|bdd|flow|skill|validator|requirement|evidence|index):.+$"
+  # 资产类型。
+  asset_type:
+    type: string
+    enum:
+      - behavior_asset
+      - module_fact
+      - engineering_fact
+      - architecture_fact
+      - validation_fact
+      - feature_asset
+      - specification_asset
+      - bdd_scenario_asset
+      - flow_asset
+      - skill_asset
+      - validator_asset
+      - requirement_asset
+  # 资产可读标题。
+  title:
+    type: string
+    minLength: 1
+  # 资产摘要，用于 Router 初筛。
+  summary:
+    type: string
+    minLength: 1
+  # 资产正文在 consumption 环境中的相对路径；Feature Asset item-only 时可省略。
+  body_path:
+    type: string
+    minLength: 1
+  # 稳定资源 URI。
+  uri:
+    type: string
+    minLength: 1
+  # 关联 schema 引用。
+  schema_refs:
+    type: object
+    additionalProperties:
+      type: string
+  # 资产适用条件。
+  applies_to:
+    type: object
+    additionalProperties: false
+    properties:
+      # 适用 query intent。
+      intents:
+        type: array
+        items:
+          type: string
+      # 适用 domain。
+      domains:
+        type: array
+        items:
+          type: string
+      # 适用 module。
+      modules:
+        type: array
+        items:
+          type: string
+      # 适用平台。
+      platforms:
+        type: array
+        items:
+          type: string
+      # 适用场景标签。
+      scenarios:
+        type: array
+        items:
+          type: string
+      # 适用能力标签。
+      capabilities:
+        type: array
+        items:
+          type: string
+      # 适用验证触点。
+      validation_touchpoints:
+        type: array
+        items:
+          type: string
+  # 预估 token 成本。
+  token_estimate:
+    type: integer
+    minimum: 0
+  # 依赖资产列表。
+  dependencies:
+    type: array
+    items:
+      type: string
+  # Router 检索标签。
+  search_tags:
+    type: array
+    items:
+      type: string
+  # 风险等级。
+  risk_level:
+    type: string
+    enum:
+      - low
+      - medium
+      - high
+      - critical
+  # 外部生产端写入的复核状态，current 表示已确认可用，stale 表示需要复核。
+  review_status:
+    type: string
+    enum:
+      - current
+      - stale
+  # 复核状态来源。
+  status_source:
+    type: object
+    additionalProperties: false
+    required:
+      - source_system
+    properties:
+      # 状态来源系统。
+      source_system:
+        type: string
+        enum:
+          - uconnect_build
+          - adapter
+          - manual_authoring
+          - validation_feedback
+          - validator_health_check
+          - other_producer
+      # Adapter ID，source_system 为 adapter 时填写。
+      source_adapter:
+        type: string
+      # 来源阶段，例如 retrieve、impl、verify、wiki、ingest。
+      source_stage:
+        type: string
+      # 状态依据的源文件、note、报告或 evidence URI。
+      source_artifact:
+        type: string
+      # 状态依据的代码提交号。
+      source_commit:
+        type: string
+      # 状态依据的资产或代码快照 ID。
+      source_snapshot:
+        type: string
+  # stale 时的外部复核原因。
+  stale_reasons:
+    type: array
+    items:
+      type: string

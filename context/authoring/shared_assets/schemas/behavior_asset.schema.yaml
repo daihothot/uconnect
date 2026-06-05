@@ -1,0 +1,189 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: uconnect://schemas/behavior_asset.schema.yaml
+title: UConnect Behavior Asset Body
+type: object
+additionalProperties: false
+# Behavior Asset 是默认导航中心，描述系统对用户、业务或外部系统可观察的行为。
+required:
+  - behavior_id
+  - asset_type
+  - domain
+  - name
+  - summary
+  - scope
+properties:
+  # 行为资产稳定 ID。
+  behavior_id:
+    type: string
+    pattern: "^behavior:.+$"
+  # 资产类型固定为 behavior_asset。
+  asset_type:
+    const: behavior_asset
+  # 所属 domain。
+  domain:
+    type: string
+    minLength: 1
+  # 行为可读名称。
+  name:
+    type: string
+    minLength: 1
+  # 行为摘要，用于 Router 初筛。
+  summary:
+    type: string
+    minLength: 1
+  # 行为别名，用于 Query / issue / BDD / spec 命中。
+  aliases:
+    type: array
+    items:
+      type: string
+  # 行为适用范围。
+  scope:
+    type: object
+    additionalProperties: false
+    properties:
+      # 适用业务域。
+      domains:
+        type: array
+        items:
+          type: string
+      # 涉及模块；模块只是实现关联，不是默认导航根。
+      modules:
+        type: array
+        items:
+          type: string
+          pattern: "^module:.+$"
+      # 适用平台。
+      platforms:
+        type: array
+        items:
+          type: string
+      # 适用场景标签。
+      scenarios:
+        type: array
+        items:
+          type: string
+      # 能力标签。
+      capabilities:
+        type: array
+        items:
+          type: string
+  # 行为触发条件摘要。
+  triggers:
+    type: array
+    items:
+      type: string
+  # 用户或系统可观察结果。
+  observable_outcomes:
+    type: array
+    items:
+      type: string
+  # 失败或风险信号摘要。
+  failure_signals:
+    type: array
+    items:
+      type: string
+  # 关联资产投影，供 build gate、Router 和关系数据库建边。
+  linked_assets:
+    type: object
+    additionalProperties: false
+    properties:
+      # 需求资产引用，回答需要做什么。
+      requirement_refs:
+        type: array
+        items:
+          type: string
+          pattern: "^requirement:.+$"
+      # 规格资产引用，回答设计承诺怎么做。
+      specification_refs:
+        type: array
+        items:
+          type: string
+          pattern: "^spec:.+$"
+      # BDD 场景资产引用，回答真实场景和验收语义。
+      bdd_refs:
+        type: array
+        items:
+          type: string
+          pattern: "^bdd:.+$"
+      # 验证事实引用，回答验证什么。
+      validation_fact_refs:
+        type: array
+        items:
+          type: string
+          pattern: "^validation:.+$"
+      # Validator 资产引用，回答怎么执行验证。
+      validator_refs:
+        type: array
+        items:
+          type: string
+          pattern: "^validator:.+$"
+      # 架构事实引用，回答行为受到哪些设计约束。
+      architecture_fact_refs:
+        type: array
+        items:
+          type: string
+          pattern: "^arch:.+$"
+      # 模块引用，回答该行为涉及哪些实现表面。
+      module_refs:
+        type: array
+        items:
+          type: string
+          pattern: "^module:.+$"
+      # 工程事实引用，回答版本、平台和工程基线约束。
+      engineering_fact_refs:
+        type: array
+        items:
+          type: string
+          pattern: "^engineering:.+$"
+      # 流程资产引用，回答行为参与哪些关键流程。
+      flow_asset_refs:
+        type: array
+        items:
+          type: string
+          pattern: "^flow:.+$"
+      # Skill 资产引用，回答处理该行为时可用哪些任务方法。
+      skill_refs:
+        type: array
+        items:
+          type: string
+          pattern: "^skill:.+$"
+      # 实现或验证证据引用。
+      implementation_evidence_refs:
+        type: array
+        items:
+          type: string
+          pattern: "^(evidence|artifact):.+$"
+  # 来源引用，例如 issue、spec、BDD、PR、commit 或文档。
+  source_refs:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - type
+        - ref
+      properties:
+        type:
+          type: string
+          enum:
+            - issue
+            - project
+            - discussion
+            - comment
+            - spec
+            - plan
+            - bdd
+            - pr
+            - commit
+            - doc
+            - other
+        ref:
+          type: string
+        url:
+          type: string
+  # 生命周期或复核状态。
+  status:
+    type: string
+  # 维护说明。
+  notes:
+    type: string

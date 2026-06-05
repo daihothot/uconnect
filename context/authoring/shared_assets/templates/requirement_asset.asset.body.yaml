@@ -1,0 +1,25 @@
+requirement_id: requirement:<domain>/<requirement_name>
+asset_type: requirement_asset
+source:
+  provider: github
+  project:
+  issue:
+  url:
+  source_refs: []
+status:
+intent:
+problem_statement:
+design_intent:
+acceptance_criteria: []
+decisions: []
+out_of_scope: []
+discussion_summary:
+linked_assets:
+  architecture_fact_refs: []
+  validation_fact_refs: []
+  flow_asset_refs: []
+extraction:
+  extracted_by:
+  extracted_at:
+  confidence:
+  needs_human_review: true

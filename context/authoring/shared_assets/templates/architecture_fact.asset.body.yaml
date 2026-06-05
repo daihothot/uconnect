@@ -1,0 +1,32 @@
+fact_id: arch:<domain>/<asset_name>
+fact_type: architecture_fact
+topics: []
+scope:
+  modules: []
+  capabilities: []
+  platforms: []
+constraints:
+  - id:
+    statement:
+    rationale:
+    recommended_practice:
+    prohibited_practice:
+    risk_if_violated:
+evidence_refs: []
+code_binding:
+  source_commit:
+  source_paths: []
+  structural_signature:
+    modules: []
+    module_structure: {}
+    touchpoints: {}
+    signature_hash:
+  review_status: current
+  status_source:
+    source_system:
+    source_adapter:
+    source_stage:
+    source_artifact:
+    source_commit:
+    source_snapshot:
+  stale_reasons: []

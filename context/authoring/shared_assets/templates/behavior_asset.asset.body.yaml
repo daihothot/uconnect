@@ -1,0 +1,30 @@
+behavior_id: behavior:<domain>/<behavior_name>
+asset_type: behavior_asset
+domain:
+name:
+summary:
+aliases: []
+scope:
+  domains: []
+  modules: []
+  platforms: []
+  scenarios: []
+  capabilities: []
+triggers: []
+observable_outcomes: []
+failure_signals: []
+linked_assets:
+  requirement_refs: []
+  specification_refs: []
+  bdd_refs: []
+  validation_fact_refs: []
+  validator_refs: []
+  architecture_fact_refs: []
+  module_refs: []
+  engineering_fact_refs: []
+  flow_asset_refs: []
+  skill_refs: []
+  implementation_evidence_refs: []
+source_refs: []
+status:
+notes:

@@ -1,0 +1,19 @@
+specification_id: spec:<domain>/<spec_name>
+asset_type: specification_asset
+source:
+  provider: adapter_spec
+  source_refs: []
+scope:
+  domains: []
+  modules: []
+  platforms: []
+  scenarios: []
+  capabilities: []
+requirement_refs: []
+feature_refs: []
+commitments: []
+requirement_coverage: []
+implementation_coverage: []
+validation_coverage: []
+status:
+notes:

@@ -1,0 +1,11 @@
+version: 1
+profiles:
+  - name: small
+    max_tokens: 4000
+    max_assets: 12
+  - name: normal
+    max_tokens: 12000
+    max_assets: 32
+  - name: deep
+    max_tokens: 32000
+    max_assets: 80

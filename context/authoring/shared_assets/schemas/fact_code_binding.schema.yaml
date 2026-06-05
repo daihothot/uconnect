@@ -1,0 +1,93 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: uconnect://schemas/fact_code_binding.schema.yaml
+title: UConnect Fact Code Binding
+type: object
+additionalProperties: false
+# FactCodeBinding 绑定 Fact 与外部生产端复核时使用的代码结构或证据签名；UConnect build 只校验字段与引用，不自行判断漂移。
+required:
+  - source_commit
+  - source_paths
+  - structural_signature
+  - review_status
+properties:
+  # Fact 复核时依据的代码提交号。
+  source_commit:
+    type: string
+    minLength: 1
+  # 复核时工作区是否包含未提交变更。
+  source_dirty:
+    type: boolean
+  # 代码树 hash。
+  source_tree_hash:
+    type: string
+  # 外部复核依据的源码、配置或资源路径。
+  source_paths:
+    type: array
+    items:
+      type: string
+    minItems: 1
+  # 外部生产端记录的结构或证据签名，用于审计和来源追踪。
+  structural_signature:
+    type: object
+    additionalProperties: false
+    required:
+      - signature_hash
+    properties:
+      # 相关模块。
+      modules:
+        type: array
+        items:
+          type: string
+      # 模块结构摘要。
+      module_structure:
+        type: object
+      # 验证触点摘要，例如日志、callback、event、API 或设备状态。
+      touchpoints:
+        type: object
+      # 结构签名 hash。
+      signature_hash:
+        type: string
+        minLength: 1
+  # 外部生产端写入的复核状态，current 表示已确认可用，stale 表示需要复核。
+  review_status:
+    type: string
+    enum:
+      - current
+      - stale
+  # 复核状态来源。
+  status_source:
+    type: object
+    additionalProperties: false
+    required:
+      - source_system
+    properties:
+      # 状态来源系统。
+      source_system:
+        type: string
+        enum:
+          - uconnect_build
+          - adapter
+          - manual_authoring
+          - validation_feedback
+          - validator_health_check
+          - other_producer
+      # Adapter ID，source_system 为 adapter 时填写。
+      source_adapter:
+        type: string
+      # 来源阶段，例如 retrieve、impl、verify、wiki、ingest。
+      source_stage:
+        type: string
+      # 状态依据的源文件、note、报告或 evidence URI。
+      source_artifact:
+        type: string
+      # 状态依据的代码提交号。
+      source_commit:
+        type: string
+      # 状态依据的资产或代码快照 ID。
+      source_snapshot:
+        type: string
+  # stale 时的外部复核原因说明。
+  stale_reasons:
+    type: array
+    items:
+      type: string

@@ -1,0 +1,107 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: uconnect://schemas/module_fact.schema.yaml
+title: UConnect Module Fact Body
+type: object
+additionalProperties: false
+# Module Fact 是自动生成的模块事实，用于实现表面定位和影响面补充。
+required:
+  - fact_id
+  - fact_type
+  - package_name
+  - package_root
+  - declared_dependencies
+  - dependent_packages
+  - entry_points
+  - config_touchpoints
+  - asset_touchpoints
+properties:
+  # 模块事实稳定 ID。
+  fact_id:
+    type: string
+    pattern: "^module:.+$"
+  # Fact 类型固定为 module_fact。
+  fact_type:
+    const: module_fact
+  # UPM 包名或模块包名。
+  package_name:
+    type: string
+  # 模块根路径。
+  package_root:
+    type: string
+  # Unity asmdef 名称。
+  asmdef_name:
+    type: string
+  # 当前模块声明依赖的模块。
+  declared_dependencies:
+    type: array
+    items:
+      type: string
+  # 依赖当前模块的下游模块。
+  dependent_packages:
+    type: array
+    items:
+      type: string
+  # 代码入口点。
+  entry_points:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - symbol
+        - source_path
+      properties:
+        # 入口符号。
+        symbol:
+          type: string
+        # 入口所在源码路径。
+        source_path:
+          type: string
+        # 入口用途。
+        purpose:
+          type: string
+  # 配置触点。
+  config_touchpoints:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - path
+      properties:
+        # 配置文件路径。
+        path:
+          type: string
+        # 配置用途。
+        purpose:
+          type: string
+  # 资源触点。
+  asset_touchpoints:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - path
+      properties:
+        # 资源路径。
+        path:
+          type: string
+        # 资源用途。
+        purpose:
+          type: string
+  # 模块提供和消费的能力标签。
+  capabilities:
+    type: object
+    additionalProperties: false
+    properties:
+      # 当前模块提供的能力。
+      provided:
+        type: array
+        items:
+          type: string
+      # 当前模块消费的能力。
+      consumed:
+        type: array
+        items:
+          type: string

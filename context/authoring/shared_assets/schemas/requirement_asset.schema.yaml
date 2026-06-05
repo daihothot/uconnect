@@ -1,0 +1,162 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: uconnect://schemas/requirement_asset.schema.yaml
+title: UConnect Requirement Asset Body
+type: object
+additionalProperties: false
+# Requirement Asset 沉淀“需要做什么”，来源通常是 issue、project 或用户意图。
+required:
+  - requirement_id
+  - asset_type
+  - source
+  - intent
+  - problem_statement
+  - design_intent
+properties:
+  # 需求资产稳定 ID。
+  requirement_id:
+    type: string
+    pattern: "^requirement:.+$"
+  # 资产类型固定为 requirement_asset。
+  asset_type:
+    const: requirement_asset
+  # 需求来源信息。
+  source:
+    type: object
+    additionalProperties: false
+    required:
+      - provider
+      - url
+    properties:
+      # 来源系统。
+      provider:
+        type: string
+        enum:
+          - github
+          - jira
+          - linear
+          - other
+      # 来源项目或项目板。
+      project:
+        type: string
+      # 来源 issue 或 ticket。
+      issue:
+        type: string
+      # 来源 URL。
+      url:
+        type: string
+        minLength: 1
+      # 相关来源引用，例如讨论、评论、PR 或文档。
+      source_refs:
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required:
+            - type
+            - ref
+          properties:
+            type:
+              type: string
+              enum:
+                - issue
+                - project
+                - discussion
+                - comment
+                - pr
+                - commit
+                - doc
+                - other
+            ref:
+              type: string
+            url:
+              type: string
+  # 生命周期或复核状态。
+  status:
+    type: string
+  # 需求意图摘要，回答需要做什么。
+  intent:
+    type: string
+    minLength: 1
+  # 问题陈述。
+  problem_statement:
+    type: string
+    minLength: 1
+  # 设计意图摘要，保留原始需求背后的目标和取舍。
+  design_intent:
+    type: string
+    minLength: 1
+  # 验收标准。
+  acceptance_criteria:
+    type: array
+    items:
+      type: string
+  # 已确认决策。
+  decisions:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - statement
+      properties:
+        # 决策结论。
+        statement:
+          type: string
+        # 决策理由。
+        rationale:
+          type: string
+        # 决策来源引用。
+        source_ref:
+          type: string
+  # 明确不在范围内的内容。
+  out_of_scope:
+    type: array
+    items:
+      type: string
+  # 关键讨论摘要。
+  discussion_summary:
+    type: string
+  # 需求相关资产引用；Requirement 不直接声明 module 归属。
+  linked_assets:
+    type: object
+    additionalProperties: false
+    properties:
+      # 关联 Architecture Fact。
+      architecture_fact_refs:
+        type: array
+        items:
+          type: string
+          pattern: "^arch:.+$"
+      # 关联 Validation Fact。
+      validation_fact_refs:
+        type: array
+        items:
+          type: string
+          pattern: "^validation:.+$"
+      # 关联 Flow Asset。
+      flow_asset_refs:
+        type: array
+        items:
+          type: string
+          pattern: "^flow:.+$"
+  # 抽取过程元信息。
+  extraction:
+    type: object
+    additionalProperties: false
+    properties:
+      # 抽取工具或人员。
+      extracted_by:
+        type: string
+      # 抽取时间。
+      extracted_at:
+        type: string
+      # 抽取置信度。
+      confidence:
+        type: string
+        enum:
+          - high
+          - medium
+          - low
+      # 是否需要人工复核。
+      needs_human_review:
+        type: boolean
