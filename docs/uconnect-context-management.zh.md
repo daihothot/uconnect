@@ -2117,6 +2117,7 @@ Router 依赖的基础资产包括：
 - `asset_graph`
 - build 后的 registry index
 - `by_behavior`
+- `by_asset`
 - `routing_policies`
 - `budget_profiles`
 
@@ -3508,6 +3509,9 @@ build 输出至少包括：
 - `consumption/context_service/indexes/by_domain/`
 - `consumption/context_service/indexes/by_module/`
 - `consumption/context_service/indexes/by_type/`
+- `consumption/context_service/indexes/by_behavior/`
+- `consumption/context_service/indexes/by_asset/`
+- `consumption/context_service/indexes/by_edge_type/`
 - `consumption/context_service/asset_graph/asset_graph.yaml`
 - `consumption/context_service/snapshots/`
 - `consumption/context_service/traces/`
